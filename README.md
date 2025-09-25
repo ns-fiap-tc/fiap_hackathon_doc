@@ -44,5 +44,6 @@ O ms-notificacao envia o link de download para o usuário através de um webhook
 
 Toda a comunicação entre os microsserviços, como a passagem de tarefas do ms-upload para o ms-processamento, é realizada de forma assíncrona através de um sistema de mensageria, utilizando o RabbitMQ. Essa abordagem desacoplada representa a arquitetura escolhida para a aplicação.
 
-<img width="1024" height="768" alt="fluxograma-hacka" src="https://github.com/user-attachments/assets/2b209a44-3702-40e9-8a91-0ab37752d821" />
+<img width="1024" height="768" alt="fluxograma-hacka-novo" src="https://github.com/user-attachments/assets/ca263541-9260-4998-85a5-fbc9856b3d7c" />
+
 
