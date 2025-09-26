@@ -1,6 +1,9 @@
 # fiap_hackathon_doc
 Repositório com a documentação para o hackathon
 
+<details>
+  <summary>Visão Geral da Arquitetura !!! PARA SER ALTERADA !!!</summary>
+
 ## Descrição da arquitetura gerada pela IA para ser revisada e alterada!!
 
 # Visão Geral da Arquitetura
