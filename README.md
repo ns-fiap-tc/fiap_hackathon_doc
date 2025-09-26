@@ -3,46 +3,63 @@ Repositório com a documentação para o hackathon
 
 ## Descrição da arquitetura gerada pela IA para ser revisada e alterada!!
 
-Descrição Detalhada da Arquitetura da Aplicação
-A arquitetura do sistema é fundamentada em uma série de repositórios distintos que gerenciam diferentes aspectos da aplicação. A infraestrutura base é estabelecida por um repositório chamado infra-base, responsável por provisionar os recursos essenciais na AWS, como VPCs e clusters. O banco de dados, que foi escolhido ser o MongoDB, é criado por outro repositório, o infra-bd.
+# Visão Geral da Arquitetura
 
-O núcleo da aplicação é composto por quatro microsserviços principais:
+A arquitetura do projeto foi desenhada para ser robusta e escalável, utilizando uma abordagem de microserviços e infraestrutura como código com Terraform. A solução é composta por diferentes repositórios que gerenciam desde a infraestrutura base até a lógica de cada serviço.
 
-ms-upload: Responsável por receber o arquivo enviado pelo usuário.
+# Componentes da Arquitetura
+A solução é dividida nos seguintes componentes principais:
 
-ms-processamento: Realiza o processamento do arquivo recebido.
+# Repositórios Terraform:
 
-frame-extractor: Extrai os frames do vídeo processado.
+Infraestrutura Base: Responsável por provisionar a infraestrutura essencial, como as VPCs (Virtual Private Clouds) e o cluster Kubernetes.
 
-ms-notificacao: Envia uma notificação ao usuário via webhook ao final do processo.
+Infraestrutura do Banco de Dados: Encarregado de criar a instância do banco de dados MongoDB, que foi a tecnologia escolhida para a persistência dos dados.
 
-Além destes, há um serviço dedicado à autenticação, que gerencia a configuração do Amazon Cognito e do Amazon API Gateway.
+# Microserviços:
 
-Fluxo de Autenticação e Acesso
-O processo de interação do usuário com a API é iniciado pela autenticação:
+MS Upload: Responsável por receber os arquivos enviados pelos usuários.
 
-O usuário se autentica no Amazon Cognito, que por sua vez gera um token JWT (JSON Web Token) de acesso.
+MS Frame Extractor: Processa os arquivos de vídeo, extraindo os frames.
 
-Toda requisição do usuário é direcionada para o API Gateway. Este atua como a porta de entrada para os serviços, validando o token JWT antes de permitir o acesso.
+MS Processamento: Orquestra o armazenamento do arquivo completo no Amazon S3 e persiste os metadados do upload e dos frames no banco de dados.
 
-Uma vez autenticado, o usuário pode interagir com os serviços expostos, como o ms-upload para enviar novos arquivos ou o ms-processamento para consultar o status de um processamento.
+MS Notificação: Envia notificações sobre o status do processamento (sucesso ou erro) para o usuário através de webhooks.
 
-Fluxo de Processamento do Vídeo
-O fluxo de trabalho, desde o upload do arquivo até a notificação final, ocorre da seguinte maneira:
+# Autenticação:
 
-O microsserviço ms-upload recebe o arquivo e o envia de forma fragmentada (em partes) para o ms-processamento.
+AWS Cognito: Utilizado para gerenciar a autenticação dos usuários, gerando um token JWT (JSON Web Token) após o login.
 
-O ms-processamento remonta o arquivo e faz o upload da sua versão completa para um bucket no Amazon S3.
+AWS API Gateway: Atua como um ponto de entrada para as requisições, validando o token JWT gerado pelo Cognito antes de autorizar o acesso aos serviços.
 
-Após o upload para o S3, a tarefa é encaminhada para o serviço frame-extractor.
+# Fluxo de Funcionamento
+Autenticação: O usuário se autentica no AWS Cognito, que gera um token JWT.
 
-O frame-extractor gera todos os frames do vídeo, faz o upload desses frames para o S3 e, em seguida, cria um arquivo zipado contendo todos eles.
+# Requisição e Validação: Toda requisição é enviada para o AWS API Gateway, que valida a autenticidade do token JWT. Se o token for inválido, o acesso é negado.
 
-Finalmente, o link para download do arquivo zipado é disponibilizado para o serviço de notificação.
+# Roteamento: O API Gateway expõe endpoints para os microserviços de Upload e Processamento. Os demais serviços (Frame Extractor e Notificação) não são expostos publicamente, comunicando-se apenas internamente.
 
-O ms-notificacao envia o link de download para o usuário através de um webhook, concluindo o fluxo.
+# Processo de Upload:
 
-Toda a comunicação entre os microsserviços, como a passagem de tarefas do ms-upload para o ms-processamento, é realizada de forma assíncrona através de um sistema de mensageria, utilizando o RabbitMQ. Essa abordagem desacoplada representa a arquitetura escolhida para a aplicação.
+O usuário envia um arquivo de vídeo para o MS Upload.
+
+Este serviço divide o arquivo em partes menores ("chunks") de 1 MB. A fragmentação do arquivo otimiza o processamento, permitindo o envio de múltiplos arquivos simultaneamente e eliminando a necessidade de um limite para o tamanho do upload.
+
+As partes do arquivo são enviadas via mensageria (RabbitMQ) para o MS Frame Extractor.
+
+# Extração e Processamento:
+
+O MS Frame Extractor consome as mensagens da fila, junta as partes do arquivo e processa os frames do vídeo.
+
+O MS Processamento recebe o arquivo completo, envia para armazenamento no Amazon S3 e grava os dados do upload no MongoDB.
+
+# Comunicação entre Serviços:
+
+A comunicação entre os serviços Upload, Frame Extractor e Processamento é assíncrona, realizada através de mensageria com RabbitMQ.
+
+Já a comunicação com o MS Notificação é feita de forma síncrona, através de requisições REST (HTTP) utilizando OpenFeign, a partir dos serviços Frame Extractor e Processamento.
+
+# Notificação: Em caso de sucesso ou erro no processamento, o MS Notificação é acionado para informar o usuário através de um serviço de webhook.
 
 <img width="1024" height="768" alt="fluxograma-hacka-novo" src="https://github.com/user-attachments/assets/ca263541-9260-4998-85a5-fbc9856b3d7c" />
 
