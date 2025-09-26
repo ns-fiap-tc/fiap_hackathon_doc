@@ -65,6 +65,10 @@ Já a comunicação com o MS Notificação é feita de forma síncrona, através
 # Notificação: Em caso de sucesso ou erro no processamento, o MS Notificação é acionado para informar o usuário através de um serviço de webhook.
 
 <img width="1024" height="768" alt="fluxograma-hacka-novo" src="https://github.com/user-attachments/assets/ca263541-9260-4998-85a5-fbc9856b3d7c" />
+</details>
+
+<details>
+  <summary>Como rodar o projeto</summary>
 
 ## 🚀 Como rodar o projeto
 
