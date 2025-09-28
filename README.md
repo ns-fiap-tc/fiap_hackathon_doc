@@ -1,25 +1,25 @@
-# fiap_hackathon_doc
+# Documentação Hackathon
 Repositório com a documentação para o hackathon
 
 <details>
   <summary>Visão Geral da Arquitetura</summary>
 
-## Descrição da arquitetura
+# Descrição da arquitetura
 
-# Visão Geral da Arquitetura
+## Visão Geral da Arquitetura
 
 A arquitetura do projeto foi desenhada para ser robusta e escalável, utilizando uma abordagem de microserviços e infraestrutura como código com Terraform. A solução é composta por diferentes repositórios que gerenciam desde a infraestrutura base até a lógica de cada serviço.
 
-# Componentes da Arquitetura
+## Componentes da Arquitetura
 A solução é dividida nos seguintes componentes principais:
 
-# Repositórios Terraform:
+## Repositórios Terraform:
 
 Infraestrutura Base: Responsável por provisionar a infraestrutura essencial, como as VPCs (Virtual Private Clouds) e o cluster Kubernetes.
 
 Infraestrutura do Banco de Dados: Encarregado de criar a instância do banco de dados MongoDB, que foi a tecnologia escolhida para a persistência dos dados. Como o banco de dados escolhido foi o MongoDB não há a necessidade de scripts relacionados ao banco de dados.
 
-# Microserviços:
+## Microserviços:
 
 * MS Upload: Responsável por receber os arquivos enviados pelos usuários.
 
@@ -33,13 +33,13 @@ Infraestrutura do Banco de Dados: Encarregado de criar a instância do banco de 
 * MS Notificação: Envia notificações sobre o status do processamento (sucesso ou erro) para o usuário através de webhooks.
 
 
-# Autenticação:
+## Autenticação:
 
 AWS Cognito: Utilizado para gerenciar a autenticação dos usuários, gerando um token JWT (JSON Web Token) após o login.
 
 AWS API Gateway: Atua como um ponto de entrada para as requisições, validando o token JWT gerado pelo Cognito antes de autorizar o acesso aos serviços.
 
-# Fluxo de Funcionamento
+## Fluxo de Funcionamento
 
 Autenticação: O usuário se autentica no AWS Cognito, que gera um token JWT.
 
@@ -92,3 +92,83 @@ Se ocorrer uma falha durante a compactação ou envio deste arquivo para a Amazo
 ## Notificação:
 
 Em caso de sucesso ou erro no processamento, o MS Notificação é acionado para informar o usuário através de um serviço de webhook.
+
+</details>
+
+<details>
+  <summary>Detalhamento execução do projeto</summary>
+
+## 👟 Passos para o provisionamento
+Este projeto possui um ecossistema composto por múltiplos repositórios que se comunicam entre si e também utilizam GitHub Actions para provisionamento ou deploy automatizado.
+
+> Para completo funcionamento da plataforma, é necessário seguir o seguinte fluxo de provisionamento:
+> 1. A provisão deste repositório; [infra-base](https://github.com/ns-fiap-tc/fiap_hackathon_infra_base)
+> 2. A provisão do repositório do banco de dados: [infra-bd](https://github.com/ns-fiap-tc/fiap_hackathon_infra_bd);
+> 3. A provisão do repositório do microsserviço de upload: [fiap_hackathon_ms_upload](https://github.com/ns-fiap-tc/fiap_hackathon_ms_upload);
+> 4. A provisão do repositório do microsserviço de notificação: [fiap_hackathon_ms_notificacao](https://github.com/ns-fiap-tc/fiap_hackathon_ms_notificacao);
+> 5. A provisão do repositório do microsserviço de processamento: [fiap_hackathon_ms_processamento](https://github.com/ns-fiap-tc/fiap_hackathon_ms_processamento);
+> 6. A provisão do repositório do microsserviço de extração de frames: [fiap_hackathon_ms_frameextractor](https://github.com/ns-fiap-tc/fiap_hackathon_ms_frameextractor);
+> 7. A provisão do repositório para autenticação com cognito e api gateway: [fiap_hackathon_autenticacao](https://github.com/ns-fiap-tc/fiap_hackathon_autenticacao);
+
+## 🚀 Como rodar o projeto
+
+### 💻 Localmente
+
+<details>
+  <summary>Passo a passo</summary>
+
+#### Pré-requisitos
+
+Antes de começar, certifique-se de ter os seguintes itens instalados e configurados em seu ambiente:
+
+1. **Terraform**: A ferramenta que permite definir, visualizar e implantar a infraestrutura de nuvem.
+2. **AWS CLI**: A interface de linha de comando da AWS.
+3. **Credenciais AWS válidas**: Você precisará de uma chave de acesso e uma chave secreta para autenticar com a AWS (no momento, o repositório usa chaves e credenciais fornecidas pelo [AWS Academy](https://awsacademy.instructure.com/) e que divergem de contas padrão). Tais credenciais devem ser inseridas no arquivo `credentials` que fica dentro da pasta `.aws`
+4. **Bucket S3 criado na AWS convencional (que não seja na aws academy)**: Você precisará de uma chave de acesso e uma chave secreta para autenticar com a AWS e conectar ao S3. Tal abordagem foi necessária pois a AWS academy não permite a criação de roles e isso inviabilizou a comunicação dos serviços rodando no eks com o S3 da AWS academy. Com isso a solução foi criar um bucket com uma role específica para ele em um conta convencional da AWS 
+
+## Como usar
+
+1. **Clonar cada repositório mencionado acima, por exemplo**:
+
+```bash
+git clone https://github.com/ns-fiap-tc/fiap_hackathon_ms_upload
+```
+
+2. **Acesse o diretório do repositório clonado, por exemplo**:
+
+```bash
+cd fiap_hackathon_ms_upload
+```
+
+3. **Defina as variáveis necessárias ao nível de ambiente, criando um arquivo `.env` de acordo com o arquivo contido em cada repositório `.env.exemplo`. Exemplo:**:
+
+```bash
+DOCKERHUB_USERNAME="dockerhub_username"
+DOCKERHUB_ACCESS_TOKEN="dokerhub_token"
+```
+
+4. **Inicialize o diretório Terraform**:
+
+```bash
+terraform init
+```
+
+5. **Visualize as mudanças que serão feitas**:
+
+```bash
+./terraform.sh plan
+```
+
+6. **Provisione a infraestrutura**:
+
+```bash
+./terraform.sh apply -auto-approve
+```
+
+7. **Para destruir a infraestrutura provisionada**:
+
+```bash
+./terraform.sh destroy -auto-approve
+```
+</details>
+</details>
