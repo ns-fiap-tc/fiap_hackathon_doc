@@ -238,6 +238,13 @@ terraform init
 </details>
 </details>
 
+<details>
+  <summary>Observabilidade</summary>
+  
+### 🔍︎ Observalibilidade  
+O projeto possui uma solução completa de observabilidade para microsserviços usando OpenTelemetry, Prometheus e Grafana em Kubernetes que está detalhado no seguinte repositório [fiap_hackathon_observability](https://github.com/ns-fiap-tc/fiap_hackathon_observability)
+</details>
+
 ## ✨ Contribuidores
 
 - Guilherme Fausto - RM 359909
