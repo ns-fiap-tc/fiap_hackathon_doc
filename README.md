@@ -118,6 +118,7 @@ Este projeto possui um ecossistema composto por múltiplos repositórios que se 
 > 5. A provisão do repositório do microsserviço de processamento: [fiap_hackathon_ms_processamento](https://github.com/ns-fiap-tc/fiap_hackathon_ms_processamento);
 > 6. A provisão do repositório do microsserviço de extração de frames: [fiap_hackathon_ms_frameextractor](https://github.com/ns-fiap-tc/fiap_hackathon_ms_frameextractor);
 > 7. A provisão do repositório para autenticação com cognito e api gateway: [fiap_hackathon_autenticacao](https://github.com/ns-fiap-tc/fiap_hackathon_autenticacao);
+> 8. A provisão do repositório para observabilidade: [fiap_hackathon_observability](https://github.com/ns-fiap-tc/fiap_hackathon_observability);
 
 ## 🚀 Como rodar o projeto
 
